@@ -1,7 +1,5 @@
 package com.plcoding.cryptocurrencyapp.data.remote.dto
 
-import com.plcoding.cryptocurrencyapp.domain.model.Coin
-
 //dto - Data Transfer Object, object we get from our api
 //data class that represents coin
 data class CoinDto(
@@ -14,13 +12,4 @@ data class CoinDto(
     val type: String
 )
 
-//function that maps coin dto to coin (data we need in our UI)
-fun CoinDto.toCoin(): Coin {
-    return Coin(
-        id = id,
-        is_active = is_active,
-        name = name,
-        rank = rank,
-        symbol = symbol
-    )
-}
+
