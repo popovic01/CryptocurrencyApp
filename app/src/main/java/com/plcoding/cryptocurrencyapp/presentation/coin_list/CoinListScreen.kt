@@ -16,8 +16,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.plcoding.cryptocurrencyapp.presentation.Screen
 import com.plcoding.cryptocurrencyapp.presentation.coin_list.components.CoinListItem
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @Composable
 fun CoinListScreen(
@@ -25,31 +27,37 @@ fun CoinListScreen(
     navController: NavController,
     viewModel: CoinListViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.value
+    val swipeRefreshState = rememberSwipeRefreshState(
+        isRefreshing = viewModel.state.isRefreshing
+    )
+    val state = viewModel.state
+
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            //mapping each coin to composable
-            items(state.coins) { coin ->
-                CoinListItem(
-                    coin = coin,
-                    onItemClick = {
-                        navController.navigate(Screen.CoinDetailScreen.route + "/${coin.id}")
-                    })
+        SwipeRefresh(state = swipeRefreshState, onRefresh = { viewModel.onEvent(CoinListEvent.Refresh) }) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                //mapping each coin to composable
+                items(state.coins) { coin ->
+                    CoinListItem(
+                        coin = coin,
+                        onItemClick = {
+                            navController.navigate(Screen.CoinDetailScreen.route + "/${coin.id}")
+                        })
+                }
             }
-        }
-        if (state.error.isNotBlank()) {
-            Text(
-                text = state.error,
-                color = MaterialTheme.colors.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.Center)
-            )
-        }
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            if (state.error?.isNotBlank() == true) {
+                Text(
+                    text = state.error,
+                    color = MaterialTheme.colors.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.Center)
+                )
+            }
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
     }
 }

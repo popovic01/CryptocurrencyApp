@@ -1,6 +1,9 @@
 package com.plcoding.cryptocurrencyapp.di
 
+import android.app.Application
+import androidx.room.Room
 import com.plcoding.cryptocurrencyapp.common.Constants
+import com.plcoding.cryptocurrencyapp.data.local.CoinDatabase
 import com.plcoding.cryptocurrencyapp.data.remote.CoinPaprikaApi
 import com.plcoding.cryptocurrencyapp.data.repository.CoinRepositoryImpl
 import com.plcoding.cryptocurrencyapp.domain.repository.CoinRepository
@@ -34,7 +37,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCoinRepository(api: CoinPaprikaApi): CoinRepository {
-        return CoinRepositoryImpl(api)
+    fun provideCoinDatabase(app: Application): CoinDatabase {
+        return Room.databaseBuilder(
+            app,
+            CoinDatabase::class.java,
+            "coindb.db"
+        ).build()
     }
 }

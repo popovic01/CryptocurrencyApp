@@ -9,7 +9,7 @@ import retrofit2.http.Path
 interface CoinPaprikaApi {
     //get coins
     @GET("v1/coins")
-    //susepend - we can execute it in a coroutine asynchronously
+    //suspend - we can execute it in a coroutine asynchronously
     suspend fun getCoins(): List<CoinDto>
 
     //get details about a specific coin
